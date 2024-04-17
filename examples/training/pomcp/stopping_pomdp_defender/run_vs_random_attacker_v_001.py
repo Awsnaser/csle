@@ -16,7 +16,7 @@ from gym_csle_stopping_game.dao.stopping_game_config import StoppingGameConfig
 from gym_csle_stopping_game.dao.stopping_game_defender_pomdp_config import StoppingGameDefenderPomdpConfig
 
 if __name__ == '__main__':
-    emulation_name = "csle-level9-040"
+    emulation_name = "csle-level9-050"
     emulation_env_config = MetastoreFacade.get_emulation_by_name(emulation_name)
     if emulation_env_config is None:
         raise ValueError(f"Could not find an emulation environment with the name: {emulation_name}")
@@ -29,12 +29,12 @@ if __name__ == '__main__':
         T=StoppingGameUtil.transition_tensor(L=1, p=0),
         O=StoppingGameUtil.observation_space(n=10),
         Z=StoppingGameUtil.observation_tensor(n=10),
-        R=StoppingGameUtil.reward_tensor(R_INT=-5, R_COST=-10, R_SLA=0, R_ST=20, L=1),
+        R=StoppingGameUtil.reward_tensor(R_INT=-1, R_COST=-(1/(1-0.99)), R_SLA=0, R_ST=0, L=1),
         A1=StoppingGameUtil.defender_actions(),
         A2=StoppingGameUtil.attacker_actions(),
-        L=1, R_INT=-10, R_COST=-10, R_SLA=0, R_ST=20, b1=StoppingGameUtil.b1(),
+        L=1, R_INT=-1, R_COST=-(1/(1-0.99)), R_SLA=0, R_ST=0, b1=StoppingGameUtil.b1(),
         S=StoppingGameUtil.state_space(), env_name="csle-stopping-game-v1",
-        save_dir="/home/kim/stopping_game_1", checkpoint_traces_freq=1000, gamma=1,
+        save_dir="/home/kim/stopping_game_1", checkpoint_traces_freq=1000, gamma=0.99,
         compute_beliefs=False, save_trace=False
     )
     attacker_stage_strategy = np.zeros((3, 2))
@@ -86,7 +86,7 @@ if __name__ == '__main__':
             agents_constants.POMCP.REINVIGORATED_PARTICLES_RATIO: HParam(
                 value=0.1, name=agents_constants.POMCP.REINVIGORATED_PARTICLES_RATIO,
                 descr="the ratio of reinvigorated particles in the particle filter"),
-            agents_constants.POMCP.PLANNING_TIME: HParam(value=30, name=agents_constants.POMCP.PLANNING_TIME,
+            agents_constants.POMCP.PLANNING_TIME: HParam(value=1, name=agents_constants.POMCP.PLANNING_TIME,
                                                          descr="the planning time"),
             agents_constants.POMCP.MAX_PARTICLES: HParam(value=100, name=agents_constants.POMCP.MAX_PARTICLES,
                                                          descr="the maximum number of belief particles"),
@@ -158,4 +158,4 @@ if __name__ == '__main__':
     agent = POMCPAgent(emulation_env_config=emulation_env_config, simulation_env_config=simulation_env_config,
                        experiment_config=experiment_config, save_to_metastore=False)
     experiment_execution = agent.train()
-    MetastoreFacade.save_experiment_execution(experiment_execution)
+    # MetastoreFacade.save_experiment_execution(experiment_execution)

@@ -27,8 +27,8 @@ if __name__ == '__main__':
 
     stopping_game_config = StoppingGameConfig(
         T=StoppingGameUtil.transition_tensor(L=1, p=0),
-        O=StoppingGameUtil.observation_space(n=10),
-        Z=StoppingGameUtil.observation_tensor(n=10),
+        O=StoppingGameUtil.observation_space(n=100),
+        Z=StoppingGameUtil.observation_tensor(n=100),
         R=StoppingGameUtil.reward_tensor(R_INT=-1, R_COST=-(1/(1-0.99)), R_SLA=0, R_ST=0, L=1),
         A1=StoppingGameUtil.defender_actions(),
         A2=StoppingGameUtil.attacker_actions(),
@@ -43,7 +43,7 @@ if __name__ == '__main__':
     attacker_stage_strategy[1][0] = 1
     attacker_stage_strategy[1][1] = 0
     attacker_stage_strategy[2] = attacker_stage_strategy[1]
-    attacker_strategy = RandomPolicy(actions=StoppingGameUtil.attacker_actions(),
+    attacker_strategy = RandomPolicy(actions=simulation_env_config.joint_action_space_config.action_spaces[0].actions,
                                      player_type=PlayerType.ATTACKER,
                                      stage_policy_tensor=list(attacker_stage_strategy))
     defender_pomdp_config = StoppingGameDefenderPomdpConfig(
@@ -51,12 +51,14 @@ if __name__ == '__main__':
         stopping_game_config=stopping_game_config, attacker_strategy=attacker_strategy
     )
     simulation_env_config.simulation_env_input_config = defender_pomdp_config
+    eval_env_config = defender_pomdp_config.copy()
+    eval_env_config.stopping_game_config.compute_beliefs = True
     S = simulation_env_config.simulation_env_input_config.stopping_game_config.S
     A = simulation_env_config.simulation_env_input_config.stopping_game_config.A1
     O = simulation_env_config.simulation_env_input_config.stopping_game_config.O
     b1 = simulation_env_config.simulation_env_input_config.stopping_game_config.b1
     initial_particles = [np.argmax(b1)]
-    rollout_policy = None
+    rollout_policy = lambda x: 0
     value_function = None
     experiment_config = ExperimentConfig(
         output_dir=f"{constants.LOGGING.DEFAULT_LOG_DIR}pomcp_test", title="POMCP test",
@@ -88,11 +90,11 @@ if __name__ == '__main__':
                 descr="the ratio of reinvigorated particles in the particle filter"),
             agents_constants.POMCP.PLANNING_TIME: HParam(value=1, name=agents_constants.POMCP.PLANNING_TIME,
                                                          descr="the planning time"),
-            agents_constants.POMCP.MAX_PARTICLES: HParam(value=100, name=agents_constants.POMCP.MAX_PARTICLES,
+            agents_constants.POMCP.MAX_PARTICLES: HParam(value=1000, name=agents_constants.POMCP.MAX_PARTICLES,
                                                          descr="the maximum number of belief particles"),
             agents_constants.POMCP.MAX_PLANNING_DEPTH: HParam(value=100, name=agents_constants.POMCP.MAX_PLANNING_DEPTH,
                                                               descr="the maximum depth for planning"),
-            agents_constants.POMCP.MAX_ROLLOUT_DEPTH: HParam(value=100, name=agents_constants.POMCP.MAX_ROLLOUT_DEPTH,
+            agents_constants.POMCP.MAX_ROLLOUT_DEPTH: HParam(value=20, name=agents_constants.POMCP.MAX_ROLLOUT_DEPTH,
                                                              descr="the maximum depth for rollout"),
             agents_constants.POMCP.C: HParam(value=15, name=agents_constants.POMCP.C,
                                              descr="the weighting factor for UCB exploration"),
@@ -141,7 +143,7 @@ if __name__ == '__main__':
                 name=agents_constants.POMCP.EVAL_ENV_NAME,
                 descr="the name of the evaluation environment"),
             agents_constants.POMCP.EVAL_ENV_CONFIG: HParam(
-                value=copy.deepcopy(simulation_env_config.simulation_env_input_config),
+                value=eval_env_config,
                 name=agents_constants.POMCP.EVAL_ENV_CONFIG, descr="the configuration of the evaluation environment"),
             agents_constants.COMMON.MAX_ENV_STEPS: HParam(
                 value=500, name=agents_constants.COMMON.MAX_ENV_STEPS,
@@ -156,6 +158,6 @@ if __name__ == '__main__':
         player_type=PlayerType.DEFENDER, player_idx=0
     )
     agent = POMCPAgent(emulation_env_config=emulation_env_config, simulation_env_config=simulation_env_config,
-                       experiment_config=experiment_config, save_to_metastore=False)
+                       experiment_config=experiment_config, save_to_metastore=True)
     experiment_execution = agent.train()
     # MetastoreFacade.save_experiment_execution(experiment_execution)

@@ -90,3 +90,11 @@ class StoppingGameDefenderPomdpConfig(SimulationEnvInputConfig):
         with io.open(json_file_path, 'r') as f:
             json_str = f.read()
         return StoppingGameDefenderPomdpConfig.from_dict(json.loads(json_str))
+
+    def copy(self) -> "StoppingGameDefenderPomdpConfig":
+        """
+        Copies the object
+
+        :return: a copy of the DTO
+        """
+        return StoppingGameDefenderPomdpConfig.from_dict(self.to_dict())

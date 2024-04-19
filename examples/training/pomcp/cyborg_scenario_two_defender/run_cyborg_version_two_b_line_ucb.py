@@ -99,7 +99,7 @@ if __name__ == '__main__':
                 value=50, name=agents_constants.POMCP.MAX_PLANNING_DEPTH, descr="the maximum depth for planning"),
             agents_constants.POMCP.MAX_ROLLOUT_DEPTH: HParam(value=4, name=agents_constants.POMCP.MAX_ROLLOUT_DEPTH,
                                                              descr="the maximum depth for rollout"),
-            agents_constants.POMCP.C: HParam(value=0.5, name=agents_constants.POMCP.C,
+            agents_constants.POMCP.C: HParam(value=1, name=agents_constants.POMCP.C,
                                              descr="the weighting factor for UCB exploration"),
             agents_constants.POMCP.C2: HParam(value=15000, name=agents_constants.POMCP.C2,
                                               descr="the weighting factor for AlphaGo exploration"),

@@ -395,7 +395,7 @@ class PPOTrainingCallback(BaseCallback):
                 t = 0
                 cumulative_reward = 0
                 while not done and t <= max_horizon:
-                    a = policy.action(o=o)
+                    a = policy.action(o=o, deterministic=False)
                     o, r, done, _, info = self.env.step(a)
                     if self.experiment_config.hparams[agents_constants.COMMON.EVALUATE_WITH_DISCOUNT].value:
                         cumulative_reward += r * math.pow(

@@ -279,7 +279,8 @@ class POMCPAgent(BaseAgent):
                 R += r
                 t += 1
                 if t % log_steps_frequency == 0:
-                    Logger.__call__().get_logger().info(f"[POMCP] t: {t}, a: {action}, r: {r}, o: {obs_id}, "
+                    Logger.__call__().get_logger().info(f"[POMCP] t: {t}, a: {action}, r: {r}, o: {o}, "
+                                                        f"pomcp b: {pomcp.compute_belief()}, "
                                                         f"s_prime: {s_prime}, action sequence: {action_sequence}, "
                                                         f"R: {R}")
 
@@ -325,7 +326,8 @@ class POMCPAgent(BaseAgent):
         if eval_env is not None:
             # Save latest trace
             if self.save_to_metastore:
-                MetastoreFacade.save_simulation_trace(eval_env.get_traces()[-1])
+                if len(eval_env.get_traces()) > 0:
+                    MetastoreFacade.save_simulation_trace(eval_env.get_traces()[-1])
             eval_env.reset_traces()
         return exp_result
 

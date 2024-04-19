@@ -179,11 +179,13 @@ class StoppingGameUtil:
         no_intrusion_dist = []
         terminal_dist = np.zeros(n + 1)
         terminal_dist[-1] = 1
-        intrusion_rv = betabinom(n=n, a=1, b=0.7)
-        no_intrusion_rv = betabinom(n=n, a=0.7, b=3)
-        for i in range(n + 1):
+        intrusion_rv = betabinom(n=n-1, a=1, b=0.7)
+        no_intrusion_rv = betabinom(n=n-1, a=0.7, b=3)
+        for i in range(n):
             intrusion_dist.append(intrusion_rv.pmf(i))
             no_intrusion_dist.append(no_intrusion_rv.pmf(i))
+        intrusion_dist.append(0)
+        no_intrusion_dist.append(0)
         Z = np.array(
             [
                 [

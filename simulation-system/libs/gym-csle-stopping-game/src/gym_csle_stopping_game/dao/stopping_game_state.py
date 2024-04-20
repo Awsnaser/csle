@@ -96,3 +96,11 @@ class StoppingGameState(JSONSerializable):
         with io.open(json_file_path, 'r') as f:
             json_str = f.read()
         return StoppingGameState.from_dict(json.loads(json_str))
+
+    def copy(self) -> "StoppingGameState":
+        """
+        Copies the object
+
+        :return: a copy of the DTO
+        """
+        return StoppingGameState.from_dict(self.to_dict())

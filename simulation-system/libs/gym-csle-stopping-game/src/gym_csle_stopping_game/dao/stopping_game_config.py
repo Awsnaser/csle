@@ -163,3 +163,11 @@ class StoppingGameConfig(SimulationEnvInputConfig):
         with io.open(json_file_path, 'r') as f:
             json_str = f.read()
         return StoppingGameConfig.from_dict(json.loads(json_str))
+
+    def copy(self) -> "StoppingGameConfig":
+        """
+        Copies the object
+
+        :return: a copy of the DTO
+        """
+        return StoppingGameConfig.from_dict(self.to_dict())

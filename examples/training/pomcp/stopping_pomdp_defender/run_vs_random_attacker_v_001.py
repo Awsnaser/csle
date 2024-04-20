@@ -61,7 +61,7 @@ if __name__ == '__main__':
     rollout_policy = None
     value_function = None
     experiment_config = ExperimentConfig(
-        output_dir=f"{constants.LOGGING.DEFAULT_LOG_DIR}pomcp_test", title="POMCP case study 1, planning time=0.93s",
+        output_dir=f"{constants.LOGGING.DEFAULT_LOG_DIR}pomcp_test", title="POMCP case study 1, planning time=0.06s",
         random_seeds=[399, 98912, 999, 41050, 55691, 22411, 33301, 87193, 99912, 22251],
         agent_type=AgentType.POMCP,
         log_every=1,
@@ -88,15 +88,15 @@ if __name__ == '__main__':
             agents_constants.POMCP.REINVIGORATED_PARTICLES_RATIO: HParam(
                 value=0.1, name=agents_constants.POMCP.REINVIGORATED_PARTICLES_RATIO,
                 descr="the ratio of reinvigorated particles in the particle filter"),
-            agents_constants.POMCP.PLANNING_TIME: HParam(value=2.5, name=agents_constants.POMCP.PLANNING_TIME,
+            agents_constants.POMCP.PLANNING_TIME: HParam(value=0.25, name=agents_constants.POMCP.PLANNING_TIME,
                                                          descr="the planning time"),
-            agents_constants.POMCP.MAX_PARTICLES: HParam(value=100, name=agents_constants.POMCP.MAX_PARTICLES,
+            agents_constants.POMCP.MAX_PARTICLES: HParam(value=1000, name=agents_constants.POMCP.MAX_PARTICLES,
                                                          descr="the maximum number of belief particles"),
-            agents_constants.POMCP.MAX_PLANNING_DEPTH: HParam(value=100, name=agents_constants.POMCP.MAX_PLANNING_DEPTH,
+            agents_constants.POMCP.MAX_PLANNING_DEPTH: HParam(value=5000, name=agents_constants.POMCP.MAX_PLANNING_DEPTH,
                                                               descr="the maximum depth for planning"),
-            agents_constants.POMCP.MAX_ROLLOUT_DEPTH: HParam(value=20, name=agents_constants.POMCP.MAX_ROLLOUT_DEPTH,
+            agents_constants.POMCP.MAX_ROLLOUT_DEPTH: HParam(value=50, name=agents_constants.POMCP.MAX_ROLLOUT_DEPTH,
                                                              descr="the maximum depth for rollout"),
-            agents_constants.POMCP.C: HParam(value=50, name=agents_constants.POMCP.C,
+            agents_constants.POMCP.C: HParam(value=75, name=agents_constants.POMCP.C,
                                              descr="the weighting factor for UCB exploration"),
             agents_constants.POMCP.PARALLEL_ROLLOUT: HParam(
                 value=False, name=agents_constants.POMCP.PARALLEL_ROLLOUT, descr="boolean flag indicating whether "

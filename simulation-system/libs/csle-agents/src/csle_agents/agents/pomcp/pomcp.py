@@ -374,9 +374,8 @@ class POMCP:
                 else:
                     count += 1
                 if count >= 80000:
-                    target = root.sample_state().red_agent_target
                     Logger.__call__().get_logger().info(
-                        f"Invalid observation: {observation}, target: {target}, "
+                        f"Invalid observation: {observation}"
                         f"given state: 1: \n{root.sample_state()}, \n"
                         f"2: \n {root.sample_state()}\n, 3: {root.sample_state()}\n ")
                     for i in range(particle_slots - len(particles)):

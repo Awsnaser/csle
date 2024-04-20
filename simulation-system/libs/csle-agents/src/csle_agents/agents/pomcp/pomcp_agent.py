@@ -111,7 +111,7 @@ class POMCPAgent(BaseAgent):
             emulation_name = self.emulation_env_config.name
         simulation_name = self.simulation_env_config.name
         self.exp_execution = ExperimentExecution(
-            result=exp_result, config=self.experiment_config, timestamp=ts, emulation_name=emulation_name,
+            result=exp_result, config=self.experiment_config.copy(), timestamp=ts, emulation_name=emulation_name,
             simulation_name=simulation_name, descr=descr, log_file_path=self.training_job.log_file_path)
         if self.save_to_metastore:
             exp_execution_id = MetastoreFacade.save_experiment_execution(self.exp_execution)
@@ -238,10 +238,6 @@ class POMCPAgent(BaseAgent):
         eval_env_name = self.experiment_config.hparams[agents_constants.POMCP.EVAL_ENV_NAME].value
         eval_env_config = self.experiment_config.hparams[agents_constants.POMCP.EVAL_ENV_CONFIG].value
         eval_env: BaseEnv = gym.make(eval_env_name, config=eval_env_config)
-        self.experiment_config.hparams[agents_constants.POMCP.EVAL_ENV_CONFIG].value = -1
-        self.experiment_config.hparams[agents_constants.POMCP.INITIAL_PARTICLES].value = -1
-        self.experiment_config.hparams[agents_constants.POMCP.ROLLOUT_POLICY].value = -1
-        self.experiment_config.hparams[agents_constants.POMCP.VALUE_FUNCTION].value = -1
 
         # Run N episodes
         returns = []
@@ -251,6 +247,7 @@ class POMCPAgent(BaseAgent):
             train_env: BaseEnv = gym.make(self.simulation_env_config.gym_env_name, config=config)
             _, info = eval_env.reset()
             s = info[agents_constants.COMMON.STATE]
+            s_prime = s
             train_env.reset()
             pomcp = POMCP(A=A, gamma=gamma, env=train_env, c=c, initial_particles=initial_particles,
                           planning_time=planning_time, max_particles=max_particles, rollout_policy=rollout_policy,
@@ -273,16 +270,18 @@ class POMCPAgent(BaseAgent):
                 action = pomcp.get_action()
                 o, r, done, _, info = eval_env.step(action)
                 action_sequence.append(action)
+                s = s_prime
                 s_prime = info[agents_constants.COMMON.STATE]
                 obs_id = info[agents_constants.COMMON.OBSERVATION]
                 pomcp.update_tree_with_new_samples(action_sequence=action_sequence, observation=obs_id, t=t)
                 R += r
                 t += 1
                 if t % log_steps_frequency == 0:
-                    Logger.__call__().get_logger().info(f"[POMCP] t: {t}, a: {action}, r: {r}, o: {o}, "
+                    Logger.__call__().get_logger().info(f"[POMCP] t: {t}, a: {action}, r: {r}, o: {o[1]}, "
+                                                        f"alerts: {obs_id}, "
                                                         f"pomcp b: {pomcp.compute_belief()}, "
-                                                        f"s_prime: {s_prime}, action sequence: {action_sequence}, "
-                                                        f"R: {R}")
+                                                        f"s: {s}, s_prime: {s_prime}, action sequence: {action_sequence}, "
+                                                        f"R: {R}, done: {done}")
 
             if i % self.experiment_config.log_every == 0:
                 # Logging
@@ -318,6 +317,10 @@ class POMCPAgent(BaseAgent):
                 self.exp_execution.timestamp = ts
                 self.exp_execution.result = exp_result
                 if self.save_to_metastore:
+                    self.exp_execution.config.hparams[agents_constants.POMCP.EVAL_ENV_CONFIG].value = -1
+                    self.exp_execution.config.hparams[agents_constants.POMCP.INITIAL_PARTICLES].value = -1
+                    self.exp_execution.config.hparams[agents_constants.POMCP.ROLLOUT_POLICY].value = -1
+                    self.exp_execution.config.hparams[agents_constants.POMCP.VALUE_FUNCTION].value = -1
                     MetastoreFacade.update_experiment_execution(experiment_execution=self.exp_execution,
                                                                 id=self.exp_execution.id)
             returns.append(R)

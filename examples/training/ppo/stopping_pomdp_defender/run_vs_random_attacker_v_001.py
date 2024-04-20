@@ -70,13 +70,13 @@ if __name__ == '__main__':
                                                             name=agents_constants.PPO.NUM_GRADIENT_STEPS,
                                                             descr="number of gradient steps"),
             agents_constants.COMMON.NUM_TRAINING_TIMESTEPS: HParam(
-                value=int(1200000), name=agents_constants.COMMON.NUM_TRAINING_TIMESTEPS,
-                descr="number of timesteps to train"),
+                value=int(4500000), name=agents_constants.COMMON.NUM_TRAINING_TIMESTEPS,
+                descr="number of time steps to train"),
             agents_constants.COMMON.EVAL_EVERY: HParam(value=10, name=agents_constants.COMMON.EVAL_EVERY,
                                                        descr="training iterations between evaluations"),
             agents_constants.COMMON.EVAL_BATCH_SIZE: HParam(value=50, name=agents_constants.COMMON.EVAL_BATCH_SIZE,
                                                             descr="the batch size for evaluation"),
-            agents_constants.COMMON.SAVE_EVERY: HParam(value=10000, name=agents_constants.COMMON.SAVE_EVERY,
+            agents_constants.COMMON.SAVE_EVERY: HParam(value=20000, name=agents_constants.COMMON.SAVE_EVERY,
                                                        descr="how frequently to save the model"),
             agents_constants.COMMON.CONFIDENCE_INTERVAL: HParam(
                 value=0.95, name=agents_constants.COMMON.CONFIDENCE_INTERVAL,
@@ -85,7 +85,7 @@ if __name__ == '__main__':
                 value=500, name=agents_constants.COMMON.MAX_ENV_STEPS,
                 descr="maximum number of steps in the environment (for envs with infinite horizon generally)"),
             agents_constants.COMMON.RUNNING_AVERAGE: HParam(
-                value=100, name=agents_constants.COMMON.RUNNING_AVERAGE,
+                value=50, name=agents_constants.COMMON.RUNNING_AVERAGE,
                 descr="the number of samples to include when computing the running avg"),
             agents_constants.COMMON.L: HParam(value=3, name=agents_constants.COMMON.L,
                                               descr="the number of stop actions"),
@@ -98,8 +98,8 @@ if __name__ == '__main__':
 
     stopping_game_config = StoppingGameConfig(
         T=StoppingGameUtil.transition_tensor(L=1, p=0),
-        O=StoppingGameUtil.observation_space(n=10),
-        Z=StoppingGameUtil.observation_tensor(n=10),
+        O=StoppingGameUtil.observation_space(n=100),
+        Z=StoppingGameUtil.observation_tensor(n=100),
         R=StoppingGameUtil.reward_tensor(R_INT=-1, R_COST=-(1/(1-0.99)), R_SLA=0, R_ST=0, L=1),
         A1=StoppingGameUtil.defender_actions(),
         A2=StoppingGameUtil.attacker_actions(),

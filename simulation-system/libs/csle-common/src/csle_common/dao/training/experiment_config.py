@@ -97,3 +97,11 @@ class ExperimentConfig(JSONSerializable):
         with io.open(json_file_path, 'r') as f:
             json_str = f.read()
         return ExperimentConfig.from_dict(json.loads(json_str))
+
+    def copy(self) -> "ExperimentConfig":
+        """
+        Copies the object
+
+        :return: a copy of the DTO
+        """
+        return ExperimentConfig.from_dict(self.to_dict())

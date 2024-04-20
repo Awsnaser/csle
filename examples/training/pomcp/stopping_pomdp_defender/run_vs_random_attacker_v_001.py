@@ -1,5 +1,4 @@
 import numpy as np
-import copy
 import csle_common.constants.constants as constants
 from csle_common.dao.training.experiment_config import ExperimentConfig
 from csle_common.metastore.metastore_facade import MetastoreFacade
@@ -27,8 +26,8 @@ if __name__ == '__main__':
 
     stopping_game_config = StoppingGameConfig(
         T=StoppingGameUtil.transition_tensor(L=1, p=0),
-        O=StoppingGameUtil.observation_space(n=100),
-        Z=StoppingGameUtil.observation_tensor(n=100),
+        O=StoppingGameUtil.observation_space(n=10),
+        Z=StoppingGameUtil.observation_tensor(n=10),
         R=StoppingGameUtil.reward_tensor(R_INT=-1, R_COST=-(1/(1-0.99)), R_SLA=0, R_ST=0, L=1),
         A1=StoppingGameUtil.defender_actions(),
         A2=StoppingGameUtil.attacker_actions(),
@@ -58,15 +57,16 @@ if __name__ == '__main__':
     O = simulation_env_config.simulation_env_input_config.stopping_game_config.O
     b1 = simulation_env_config.simulation_env_input_config.stopping_game_config.b1
     initial_particles = [np.argmax(b1)]
-    rollout_policy = lambda x: 0
+    # rollout_policy = lambda x: 0
+    rollout_policy = None
     value_function = None
     experiment_config = ExperimentConfig(
-        output_dir=f"{constants.LOGGING.DEFAULT_LOG_DIR}pomcp_test", title="POMCP test",
-        random_seeds=[399, 98912, 999, 555],
+        output_dir=f"{constants.LOGGING.DEFAULT_LOG_DIR}pomcp_test", title="POMCP case study 1, planning time=0.93s",
+        random_seeds=[399, 98912, 999, 41050, 55691, 22411, 33301, 87193, 99912, 22251],
         agent_type=AgentType.POMCP,
         log_every=1,
         hparams={
-            agents_constants.POMCP.N: HParam(value=50, name=agents_constants.POMCP.N,
+            agents_constants.POMCP.N: HParam(value=100, name=agents_constants.POMCP.N,
                                              descr="the number of episodes"),
             agents_constants.POMCP.OBJECTIVE_TYPE: HParam(
                 value=ObjectiveType.MAX, name=agents_constants.POMCP.OBJECTIVE_TYPE,
@@ -88,15 +88,15 @@ if __name__ == '__main__':
             agents_constants.POMCP.REINVIGORATED_PARTICLES_RATIO: HParam(
                 value=0.1, name=agents_constants.POMCP.REINVIGORATED_PARTICLES_RATIO,
                 descr="the ratio of reinvigorated particles in the particle filter"),
-            agents_constants.POMCP.PLANNING_TIME: HParam(value=1, name=agents_constants.POMCP.PLANNING_TIME,
+            agents_constants.POMCP.PLANNING_TIME: HParam(value=2.5, name=agents_constants.POMCP.PLANNING_TIME,
                                                          descr="the planning time"),
-            agents_constants.POMCP.MAX_PARTICLES: HParam(value=1000, name=agents_constants.POMCP.MAX_PARTICLES,
+            agents_constants.POMCP.MAX_PARTICLES: HParam(value=100, name=agents_constants.POMCP.MAX_PARTICLES,
                                                          descr="the maximum number of belief particles"),
             agents_constants.POMCP.MAX_PLANNING_DEPTH: HParam(value=100, name=agents_constants.POMCP.MAX_PLANNING_DEPTH,
                                                               descr="the maximum depth for planning"),
             agents_constants.POMCP.MAX_ROLLOUT_DEPTH: HParam(value=20, name=agents_constants.POMCP.MAX_ROLLOUT_DEPTH,
                                                              descr="the maximum depth for rollout"),
-            agents_constants.POMCP.C: HParam(value=15, name=agents_constants.POMCP.C,
+            agents_constants.POMCP.C: HParam(value=50, name=agents_constants.POMCP.C,
                                              descr="the weighting factor for UCB exploration"),
             agents_constants.POMCP.PARALLEL_ROLLOUT: HParam(
                 value=False, name=agents_constants.POMCP.PARALLEL_ROLLOUT, descr="boolean flag indicating whether "
@@ -160,4 +160,4 @@ if __name__ == '__main__':
     agent = POMCPAgent(emulation_env_config=emulation_env_config, simulation_env_config=simulation_env_config,
                        experiment_config=experiment_config, save_to_metastore=True)
     experiment_execution = agent.train()
-    # MetastoreFacade.save_experiment_execution(experiment_execution)
+    MetastoreFacade.save_experiment_execution(experiment_execution)

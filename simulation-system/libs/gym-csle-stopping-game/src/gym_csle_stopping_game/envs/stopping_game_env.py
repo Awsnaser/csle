@@ -100,6 +100,9 @@ class StoppingGameEnv(BaseEnv):
         # Update time-step
         self.state.t += 1
 
+        if self.state.s == 2:
+            done = True
+
         # Populate info dict
         info[env_constants.ENV_METRICS.STOPS_REMAINING] = self.state.l
         info[env_constants.ENV_METRICS.STATE] = self.state.s
@@ -111,6 +114,9 @@ class StoppingGameEnv(BaseEnv):
         # Get observations
         attacker_obs = self.state.attacker_observation()
         defender_obs = self.state.defender_observation()
+        defender_obs = list(defender_obs)
+        defender_obs.append(o)
+        defender_obs = np.array(defender_obs)
 
         # Log trace
         if self.config.save_trace:

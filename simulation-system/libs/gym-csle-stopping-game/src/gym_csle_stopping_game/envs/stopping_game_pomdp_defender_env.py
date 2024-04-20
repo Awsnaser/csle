@@ -62,6 +62,7 @@ class StoppingGamePomdpDefenderEnv(BaseEnv):
         o, r, d, _, info = self.stopping_game_env.step((a1, (pi2, a2)))
         self.latest_attacker_obs = o[1]
         defender_obs = o[0]
+        defender_obs = [defender_obs[0], defender_obs[-1]]
 
         return defender_obs, r[0], d, d, info
 

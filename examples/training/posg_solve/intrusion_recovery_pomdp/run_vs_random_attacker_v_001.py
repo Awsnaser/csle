@@ -3,8 +3,8 @@ from csle_tolerance.dao.intrusion_recovery_game_config import IntrusionRecoveryG
 from csle_tolerance.util.intrusion_recovery_pomdp_util import IntrusionRecoveryPomdpUtil
 
 if __name__ == '__main__':
-    eta = 8
-    p_a = 1
+    eta = 50000
+    p_a = 0.05
     p_c_1 = 0.01
     BTR = np.inf
     negate_costs = False

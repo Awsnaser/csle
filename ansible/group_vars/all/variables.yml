@@ -74,3 +74,4 @@ csle_config:
         gpus: 0
         RAM: 64
   allow_registration: true
+  version: "0.7.0"  # Added version here

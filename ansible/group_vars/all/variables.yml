@@ -1,7 +1,7 @@
 user: "kim"
 csle_git_repo_url: "https://github.com/Limmen/csle"
-leader_ip: "34.142.42.219"
-leader_public_ip: "34.142.42.219"
+leader_ip: ""
+leader_public_ip: ""
 nginx_content_name: "nginx_configuration_content.txt"
 web_port: 7777
 postgres_version: "15"
@@ -57,20 +57,15 @@ csle_config:
   postgresql_log_dir: "/var/log/postgresql/"
   nginx_log_dir: "/var/log/nginx/"
   default_log_dir: "/tmp/csle/"
-  metastore_ip: "34.142.42.219"
+  metastore_ip: ""
   metastore_user: "csle"
   metastore_password: "csle"
   metastore_database_name: "csle"
   version: "0.7.0"
   cluster_config:
     cluster_nodes:
-      - ip: "34.142.42.219"
+      - ip: ""
         leader: true
-        cpus: 8
-        gpus: 0
-        RAM: 64
-      - ip: "35.246.78.21"
-        leader: false
         cpus: 8
         gpus: 0
         RAM: 64
